@@ -1,12 +1,12 @@
-let height = 6; //number of guesses
-let width = 5; //length of the word
+let height = 6; 
+let width = 5; 
 
-let row = 0; //current guess
-let col = 0; //current letter for that attempt
+let row = 0; 
+let col = 0; 
 
-let gameOver = false; //Initialise the game over state as false
+let gameOver = false; 
 
-//An array of words that you can cycle through
+
 let wordList = [
   "cigar",
   "rebut",
@@ -2319,7 +2319,6 @@ let wordList = [
   "shave",
 ];
 
-// An array of acceptable values when a user makes a guess
 let guessList = [
   "aahed",
   "aalii",
@@ -12963,62 +12962,59 @@ let guessList = [
 
 guessList = guessList.concat(wordList);
 
-//Sets the value of word as a random word from the wordList, it also changes it to uppercase and logs the word to the console.
+
 let word = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
 console.log(word);
 
-//Upon loading the page the function initialise is run.
 window.onload = function () {
   initialise();
 };
 
-//The Initialise function goes through two loops to create rows and columns, each box is called tile and is a span element with the class tile.
 function initialise() {
   for (let r = 0; r < height; r++) {
     for (let c = 0; c < width; c++) {
       let tile = document.createElement("span");
-      tile.id = r.toString() + "-" + c.toString(); //Gives each tile an ID with the row and column position.
+      tile.id = r.toString() + "-" + c.toString(); 
       tile.classList.add("tile");
       tile.innerText = "";
-      document.getElementById("board").appendChild(tile); //Adds the tiles to the board defined in the HTML
+      document.getElementById("board").appendChild(tile); 
     }
   }
 
   document.addEventListener("keyup", (e) => {
-    // We use keyup here instead of keydown because you want to wait until user has lifted their finger off the key before it registers which letter was pressed.
-    if (gameOver) return; // Checks if the Game Over state is true, if it is then the code below will not run.
+    
+    if (gameOver) return; 
     if ("KeyA" <= e.code && e.code <= "KeyZ") {
-      //Checks to see which key between Key A and Key Z is pressed.
+     
       if (col < width) {
-        //Checks to see if the current position in the colummn is less than the width of the word in this case 5
+
         let currentTile = document.getElementById(
-          row.toString() + "-" + col.toString() //Gets the position of the current tile e.g 1-1
+          row.toString() + "-" + col.toString() 
         );
         if (currentTile.innerText == "") {
-          //If the current tile is empty then...
-          currentTile.innerText = e.code[3]; //..take the value at index position 3 in KeyA in this case the letter A
+         
+          currentTile.innerText = e.code[3]; 
           col += 1;
         }
       }
     } else if (e.code == "Backspace") {
-      //Checks to see if Backspace is pressed
+     
       if (0 < col && col <= width) {
-        //Checks to see if the current tile position is more than index 0 for the column and less than the width of the word so that you can delete a word you have input
-        col -= 1; //Allows you to go back one index position on the column
+        
+        col -= 1; 
       }
       let currentTile = document.getElementById(
         row.toString() + "-" + col.toString()
       );
       currentTile.innerText = "";
     } else if (e.code == "Enter") {
-      //Checks to see if Enter is pressed
-      update(); //Runs the update function
+      update(); 
     }
 
     if (!gameOver && row == height) {
-      //Checks to see if the game over state is false and the last row matches the height number, in this case 6...
-      gameOver = true; //...If it does then the gameOver state is true...
-      document.getElementById("answer").innerText = word; //...and the random word assigned at the start is revealed.
+      
+      gameOver = true; 
+      document.getElementById("answer").innerText = word; 
     }
   });
 }
