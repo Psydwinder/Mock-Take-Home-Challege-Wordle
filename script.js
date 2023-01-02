@@ -13142,8 +13142,3 @@ function update() {
   col = 0;
 }
 
-function winningMsg (){
-  winningMdl = document.createElement("div");
-  winningMdl.classList.add("winning");
-  const 
-}
