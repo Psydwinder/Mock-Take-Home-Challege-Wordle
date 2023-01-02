@@ -12984,43 +12984,91 @@ function initialise() {
     }
   }
 
-  document.addEventListener("keyup", (e) => {
-    // We use keyup here instead of keydown because you want to wait until user has lifted their finger off the key before it registers which letter was pressed.
-    if (gameOver) return; // Checks if the Game Over state is true, if it is then the code below will not run.
-    if ("KeyA" <= e.code && e.code <= "KeyZ") {
-      //Checks to see which key between Key A and Key Z is pressed.
-      if (col < width) {
-        //Checks to see if the current position in the colummn is less than the width of the word in this case 5
-        let currentTile = document.getElementById(
-          row.toString() + "-" + col.toString() //Gets the position of the current tile e.g 1-1
-        );
-        if (currentTile.innerText == "") {
-          //If the current tile is empty then...
-          currentTile.innerText = e.code[3]; //..take the value at index position 3 in KeyA in this case the letter A
-          col += 1;
-        }
-      }
-    } else if (e.code == "Backspace") {
-      //Checks to see if Backspace is pressed
-      if (0 < col && col <= width) {
-        //Checks to see if the current tile position is more than index 0 for the column and less than the width of the word so that you can delete a word you have input
-        col -= 1; //Allows you to go back one index position on the column
-      }
-      let currentTile = document.getElementById(
-        row.toString() + "-" + col.toString()
-      );
-      currentTile.innerText = "";
-    } else if (e.code == "Enter") {
-      //Checks to see if Enter is pressed
-      update(); //Runs the update function
+// Create the keyboard
+let keyboard = [
+  ["Q","W","E","R","T","Y","U","I","O","P"],
+  ["A","S","D","F","G","H","J","K","L"," "],
+  ["Enter","Z","X","C","V","B","N","M","⌫"]
+]
+
+for (let i=0; i<keyboard.length; i++) {
+  let currRow = keyboard[i];
+  let keyboardRow = document.createElement("div");
+  keyboardRow.classList.add("keyboard-row");
+
+  for (let j=0; j<currRow.length; j++){
+    let keyTile = document.createElement("div");
+    let key =currRow[j];
+    keyTile.innerText = key;
+    if (key =="Enter"){
+      keyTile.id="Enter";
+    }
+    else if (key == "⌫"){
+      keyTile.id = "Backspace";
+    }
+    else if ("A" <= key && key <= "Z"){
+      keyTile.id = "Key" + key; //Key + A
     }
 
-    if (!gameOver && row == height) {
-      //Checks to see if the game over state is false and the last row matches the height number, in this case 6...
-      gameOver = true; //...If it does then the gameOver state is true...
-      document.getElementById("answer").innerText = word; //...and the random word assigned at the start is revealed.
+    keyTile.addEventListener("click",processKey);
+
+    if (key == "Enter"){
+      keyTile.classList.add("enter-key-tile");
+    } else {
+      keyTile.classList.add("key-tile");
     }
+    keyboardRow.appendChild(keyTile);
+  }
+  document.body.appendChild(keyboardRow);
+}
+
+//Listen for keypress
+  document.addEventListener("keyup", (e) => {
+    // We use keyup here instead of keydown because you want to wait until user has lifted their finger off the key before it registers which letter was pressed.
+   processInput(e);
   });
+}
+
+function processKey (){
+  let e = {"code" : this.id};
+  processInput(e);
+}
+
+function processInput (e){
+  if (gameOver) return; // Checks if the Game Over state is true, if it is then the code below will not run.
+  if ("KeyA" <= e.code && e.code <= "KeyZ") {
+    //Checks to see which key between Key A and Key Z is pressed.
+    if (col < width) {
+      //Checks to see if the current position in the colummn is less than the width of the word in this case 5
+      let currentTile = document.getElementById(
+        row.toString() + "-" + col.toString() //Gets the position of the current tile e.g 1-1
+      );
+      if (currentTile.innerText == "") {
+        //If the current tile is empty then...
+        currentTile.innerText = e.code[3]; //..take the value at index position 3 in KeyA in this case the letter A
+        col += 1;
+      }
+    }
+  } else if (e.code == "Backspace") {
+    //Checks to see if Backspace is pressed
+    if (0 < col && col <= width) {
+      //Checks to see if the current tile position is more than index 0 for the column and less than the width of the word so that you can delete a word you have input
+      col -= 1; //Allows you to go back one index position on the column
+    }
+    let currentTile = document.getElementById(
+      row.toString() + "-" + col.toString()
+    );
+    currentTile.innerText = "";
+  } else if (e.code == "Enter") {
+    //Checks to see if Enter is pressed
+    update(); //Runs the update function
+  }
+
+  if (!gameOver && row == height) {
+    //Checks to see if the game over state is false and the last row matches the height number, in this case 6...
+    gameOver = true; //...If it does then the gameOver state is true...
+    document.getElementById("answer").innerText = word; //...and the random word assigned at the start is revealed.
+  }
 }
 
 function update() {
@@ -13059,6 +13107,9 @@ function update() {
     let letter = currentTile.innerText;
     if (word[c] == letter) {
       currentTile.classList.add("correct");
+      let keyTile = document.getElementById("Key"+ letter);
+      keyTile.classList.remove("present")
+      keyTile.classList.add("correct")
       correct += 1;
       letterCount[letter] -= 1;
     }
@@ -13076,12 +13127,23 @@ function update() {
     if (!currentTile.classList.contains("correct")) {
       if (word.includes(letter) && letterCount[letter] > 0) {
         currentTile.classList.add("present");
+        let keyTile = document.getElementById("Key"+ letter);
+        if (!keyTile.classList.contains("correct")) {
+      keyTile.classList.add("present")}
         letterCount[letter] -= 1;
       } else {
         currentTile.classList.add("absent");
+        let keyTile = document.getElementById("Key"+ letter);
+      keyTile.classList.add("absent")
       }
     }
   }
   row += 1;
   col = 0;
+}
+
+function winningMsg (){
+  winningMdl = document.createElement("div");
+  winningMdl.classList.add("winning");
+  const 
 }
